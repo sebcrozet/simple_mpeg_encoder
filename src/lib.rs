@@ -180,12 +180,6 @@ impl Encoder {
         }
 
         unsafe {
-            (*self.frame).pts +=
-                ffmpeg_sys::av_rescale_q(1, (*self.context).time_base, (*self.video_st).time_base);
-            self.curr_frame_index += self.curr_frame_index;
-        }
-
-        unsafe {
 
             (*self.tmp_frame).width = width as i32;
             (*self.tmp_frame).height = height as i32;
@@ -248,6 +242,12 @@ impl Encoder {
                 let _ = ffmpeg_sys::av_interleaved_write_frame(self.format_context, &mut pkt);
                 ffmpeg_sys::av_free_packet(&mut pkt);
             }
+        }
+
+        unsafe {
+            (*self.frame).pts +=
+                ffmpeg_sys::av_rescale_q(1, (*self.context).time_base, (*self.video_st).time_base);
+            self.curr_frame_index += self.curr_frame_index;
         }
     }
 
